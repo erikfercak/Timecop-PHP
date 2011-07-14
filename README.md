@@ -2,6 +2,7 @@
 Time testing php library inspired by [ruby timecop gem](https://github.com/jtrupiano/timecop).
 
 Timecop-PHP provides wrappers around date/time functions:
+
 - time (Timecop::time())
 - date (Timecop::date())
 - getdate (Timecop::getdate())
@@ -54,6 +55,7 @@ Requires `runkit` PECL module to override PHP internal functions. Current pecl v
 does not work with PHP 5.2+ therefore I recommend you to compile your own from sources.
 
 Sources in PHP svn haven't been worked on for a while now so grab ones on the github instead:
+
     $ git clone https://github.com/zenovich/runkit
     $ cd ./runkit
     $ phpize
@@ -65,5 +67,6 @@ Note: make test failed and/or skipped every test on CentOS 5 with 64bit PHP 5.2.
 Timecop still worked. YMMV.
 
 You need to enable runkit extension and override flag in php.ini:
+
     extension=runkit.so
     runkit.internal_override = 1
