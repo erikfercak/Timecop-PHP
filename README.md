@@ -45,7 +45,7 @@ section for more details.
     Timecop::restore();
 
     $frozenTime == time(); // FALSE
-    $frozenTime < time(); // TRUE
+    $frozenTime > time(); // TRUE
 
     // restore original PHP functionality
     Timecop::unwarpTime();
