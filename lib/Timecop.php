@@ -76,7 +76,7 @@ class Timecop
      * Get eighter function name or its alias name based on actual deploy status
      * @return string function name
      */
-    protected function getFunctionAlias($function)
+    protected static function getFunctionAlias($function)
     {
         if (self::$onMission) {
             $function = $function . '_alias';
@@ -147,7 +147,7 @@ class Timecop
      * @argument string alias function body
      * @throws RuntimeException
      */
-    protected function aliasFunction($function, $arguments, $body)
+    protected static function aliasFunction($function, $arguments, $body)
     {
         if (!runkit_function_rename($function, $function . '_alias')
             || !runkit_function_add($function, $arguments, $body)
@@ -161,7 +161,7 @@ class Timecop
      * @param string function name to restore
      * @throws RuntimeException
      */
-    protected function unaliasFunction($function)
+    protected static function unaliasFunction($function)
     {
         if (!runkit_function_remove($function)
             || !runkit_function_rename($function . '_alias', $function)
