@@ -139,4 +139,64 @@ class TimecopTest extends PHPUnit_Framework_TestCase
         $this->assertNotEquals(strftime('%a %h %Y %X'), Timecop::strftime('%a %h %Y %X'));
         $this->assertNotEquals(strtotime('+1 day'), Timecop::strtotime('+1 day'));
     }
+
+    public function validMktimeDates()
+    {
+        $base = $this->time;
+        return array(
+            array($base,             null, null, null, null, null, null, 1),
+            array($base - 43200,     1,    null, null, null, null, null, 1),
+            array($base - 43740,     1,    1,    null, null, null, null, 1),
+            array($base - 43784,     1,    1,    1,    null, null, null, 1),
+            array($base - 13090184,  1,    1,    1,    1,    null, null, 1),
+            array($base - 14386184,  1,    1,    1,    1,    1,    null, 1),
+            array($base - 235310984, 1,    1,    1,    1,    1,    2000, 1)
+        );
+    }
+
+    /**
+     * @dataProvider validMktimeDates 
+     */
+    public function testMktime($result, $hour, $minute, $second, $month, $day, 
+        $year, $isDst) 
+    {
+        Timecop::freeze();
+        Timecop::travel($this->time);
+
+        Timecop::warpTime();
+        $got = mktime($hour, $minute, $second, $month, $day, $year, $isDst);
+        Timecop::unwarpTime();
+
+        $this->assertEquals($result, $got);
+    }
+
+    public function validGmmktimeDates() 
+    {
+        $base = $this->time;
+        return array(
+            array($base,             null, null, null, null, null, null, 1),
+            array($base - 39600,     1,    null, null, null, null, null, 1),
+            array($base - 40140,     1,    1,    null, null, null, null, 1),
+            array($base - 40184,     1,    1,    1,    null, null, null, 1),
+            array($base - 13086584,  1,    1,    1,    1,    null, null, 1),
+            array($base - 14382584,  1,    1,    1,    1,    1,    null, 1),
+            array($base - 235307384, 1,    1,    1,    1,    1,    2000, 1)
+        );
+    }
+
+    /**
+     * @dataProvider validGmmktimeDates 
+     */
+    public function testGmmktime($result, $hour, $minute, $second, $month, $day, 
+        $year, $isDst) 
+    {
+        Timecop::freeze();
+        Timecop::travel($this->time + 3600);
+
+        Timecop::warpTime();
+        $got = gmmktime($hour, $minute, $second, $month, $day, $year, $isDst);
+        Timecop::unwarpTime();
+
+        $this->assertEquals($result, $got);
+    }
 }

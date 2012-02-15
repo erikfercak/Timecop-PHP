@@ -251,15 +251,15 @@ class Timecop
         );
     }
 
-    public static function gmmktime($hour = NULL, $minute = NULL, $second = NULL, $month = NULL,
-        $day = NULL, $year = NULL, $is_dst = -1
-    ) {
-        if ($hour == NULL) $hour = self::date('H');
-        if ($minute == NULL) $hour = self::date('i');
-        if ($second == NULL) $hour = self::date('s');
-        if ($month == NULL) $hour = self::date('n');
-        if ($day == NULL) $hour = self::date('j');
-        if ($year == NULL) $hour = self::date('Y');
+    public static function gmmktime($hour = NULL, $minute = NULL, $second = NULL, 
+        $month = NULL, $day = NULL, $year = NULL, $is_dst = -1) 
+    {
+        if ($hour   == NULL) $hour   = self::gmdate('H');
+        if ($minute == NULL) $minute = self::gmdate('i');
+        if ($second == NULL) $second = self::gmdate('s');
+        if ($month  == NULL) $month  = self::gmdate('n');
+        if ($day    == NULL) $day    = self::gmdate('j');
+        if ($year   == NULL) $year   = self::gmdate('Y');
 
         return call_user_func(
             self::getFunctionAlias('gmmktime'),
@@ -291,15 +291,15 @@ class Timecop
         );
     }
 
-    public static function mktime($hour = NULL, $minute = NULL, $second = NULL, $month = NULL,
-        $day = NULL, $year = NULL, $is_dst = -1
-    ) {
-        if ($hour == NULL) $hour = self::date('H');
-        if ($minute == NULL) $hour = self::date('i');
-        if ($second == NULL) $hour = self::date('s');
-        if ($month == NULL) $hour = self::date('n');
-        if ($day == NULL) $hour = self::date('j');
-        if ($year == NULL) $hour = self::date('Y');
+    public static function mktime($hour = NULL, $minute = NULL, $second = NULL, 
+        $month = NULL, $day = NULL, $year = NULL, $is_dst = -1) 
+    {
+        if ($hour   == NULL) $hour   = self::date('H');
+        if ($minute == NULL) $minute = self::date('i');
+        if ($second == NULL) $second = self::date('s');
+        if ($month  == NULL) $month  = self::date('n');
+        if ($day    == NULL) $day    = self::date('j');
+        if ($year   == NULL) $year   = self::date('Y');
 
         return call_user_func(
             self::getFunctionAlias('mktime'),
