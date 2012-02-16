@@ -7,18 +7,32 @@
  */
 class Timecop
 {
-    /** @var int delta in seconds from actual time() */
+    /** 
+     * Delta in seconds from actual time() 
+     *
+     * @var int 
+     */
     protected static $delta = 0;
 
-    /** @var mixed if time si frozen than frozen timestamp otherwise bool false */
+    /** 
+     * If time si frozen than frozen timestamp otherwise bool false 
+     *
+     * @var bool|int
+     */
     protected static $frozen = FALSE;
 
-    /** @var bool have we taken over php functions? */
+    /**
+     * Have we taken over php functions?  
+     *
+     * @var bool 
+     */
     protected static $onMission = FALSE;
 
     /**
-     * @var array internal php functions replacements
+     * Internal php functions replacements
      * '<function>' => array('<arguments>', '<body>')
+     *
+     * @var array 
      */
     protected static $aliases = array(
         'time' => array(
@@ -27,54 +41,56 @@ class Timecop
         ),
         'date' => array(
             '$format, $timestamp = NULL',
-            'return Timecop::date($format, $timestamp);',
+            'return Timecop::date($format, $timestamp);'
         ),
         'getdate' => array(
             '$timestamp = NULL',
-            'return Timecop::getdate($timestamp);',
+            'return Timecop::getdate($timestamp);'
         ),
         'gmdate' => array(
             '$format, $timestamp = NULL',
-            'return Timecop::gmdate($format, $timestamp);',
+            'return Timecop::gmdate($format, $timestamp);'
         ),
         'gmmktime' => array(
             '$hour = NULL, $minute = NULL, $second = NULL, $month = NULL, $day = NULL, $year = NULL, $is_dst = -1',
-            'return Timecop::gmmktime($hour, $minute, $second, $month, $day, $year, $is_dst);',
+            'return Timecop::gmmktime($hour, $minute, $second, $month, $day, $year, $is_dst);'
         ),
         'gmstrftime' => array(
             '$format, $timestamp = NULL',
-            'return Timecop::gmstrftime($format, $timestamp);',
+            'return Timecop::gmstrftime($format, $timestamp);'
         ),
         'idate' => array(
             '$format, $timestamp = NULL',
-            'return Timecop::idate($format, $timestamp);',
+            'return Timecop::idate($format, $timestamp);'
         ),
         'localtime' => array(
             '$timestamp = NULL, $isAssociative = FALSE',
-            'return Timecop::localtime($timestamp, $isAssociative);',
+            'return Timecop::localtime($timestamp, $isAssociative);'
         ),
         'mktime' => array(
             '$hour = NULL, $minute = NULL, $second = NULL, $month = NULL, $day = NULL, $year = NULL, $is_dst = -1',
-            'return Timecop::mktime($hour, $minute, $second, $month, $day, $year, $is_dst);',
+            'return Timecop::mktime($hour, $minute, $second, $month, $day, $year, $is_dst);'
         ),
         'strftime' => array(
             '$format, $timestamp = NULL',
-            'return Timecop::strftime($format, $timestamp);',
+            'return Timecop::strftime($format, $timestamp);'
         ),
         'strptime' => array(
             '$date, $format',
-            'return Timecop::strptime($date, $format);',
+            'return Timecop::strptime($date, $format);'
         ),
         'strtotime' => array(
             '$format, $timestamp = NULL',
-            'return Timecop::strtotime($format, $timestamp);',
-        ),
+            'return Timecop::strtotime($format, $timestamp);'
+        )
     );
 
 
     /**
      * Get eighter function name or its alias name based on actual deploy status
-     * @return string function name
+     *
+     * @param string $function
+     * @return string 
      */
     protected static function getFunctionAlias($function)
     {
@@ -87,7 +103,9 @@ class Timecop
 
     /**
      * Moves time backwards/forwards
-     * @argument int how seconds ahead/backwards
+     *
+     * @param int $timestamp
+     * @return void
      */
     public static function travel($timestamp)
     {
@@ -102,6 +120,8 @@ class Timecop
 
     /**
      * Unfreezes and returns time back to present
+     *
+     * @return void
      */
     public static function restore()
     {
@@ -111,6 +131,8 @@ class Timecop
 
     /**
      * Freezes time
+     *
+     * @return void
      */
     public static function freeze()
     {
@@ -119,6 +141,8 @@ class Timecop
 
     /**
      * Unfreezes time
+     *
+     * @return void
      */
     public static function unfreeze()
     {
@@ -127,7 +151,8 @@ class Timecop
 
     /**
      * Returns time as calculated by Timecop
-     * @return int timestamp
+     *
+     * @return int
      */
     public static function time()
     {
@@ -142,37 +167,41 @@ class Timecop
 
     /**
      * Aliases function
-     * @argument string function to alias
-     * @argument string alias function arguments
-     * @argument string alias function body
+     *
      * @throws RuntimeException
+     * @param string $function
+     * @param string $params
+     * @param string $body
+     * @return void
      */
     protected static function aliasFunction($function, $arguments, $body)
     {
         if (!runkit_function_rename($function, $function . '_alias')
-            || !runkit_function_add($function, $arguments, $body)
-        ) {
+        ||  !runkit_function_add($function, $arguments, $body)) {
             throw new RuntimeException("Runkit failed to alias function '$function'");
         }
     }
 
     /**
      * Unaliases (restores) function
-     * @param string function name to restore
+     *
      * @throws RuntimeException
+     * @param string $function
+     * @return void
      */
     protected static function unaliasFunction($function)
     {
         if (!runkit_function_remove($function)
-            || !runkit_function_rename($function . '_alias', $function)
-        ) {
+        ||  !runkit_function_rename($function . '_alias', $function)) {
             throw new RuntimeException("Runkit failed to unalias function '$function'");
         }
     }
 
     /**
      * Replaces internal php date and time functions
+     *
      * @throws RuntimeException
+     * @return void
      */
     public static function warpTime()
     {
@@ -192,12 +221,15 @@ class Timecop
         foreach (self::$aliases as $function => $callback) {
             self::aliasFunction($function, $callback[0], $callback[1]);
         }
+
         self::$onMission = TRUE;
     }
 
     /**
      * Restores internal php date and time functions
+     *
      * @throws RuntimeException
+     * @return void
      */
     public static function unwarpTime()
     {
@@ -208,12 +240,14 @@ class Timecop
         foreach (self::$aliases as $function => $callback) {
             self::unaliasFunction($function);
         }
+
         self::$onMission = FALSE;
     }
 
     /**
      * Helper function to set correct default timestamp in case it's NULL
-     * @argument int
+     *
+     * @param null|int $timestamp
      * @return int
      */
     protected static function getTs($timestamp)
@@ -225,7 +259,9 @@ class Timecop
     }
 
     /**
-     * Wrappers around internal php date and time functions
+     * @param string $format
+     * @param null|int $timestamp
+     * @return string
      */
     public static function date($format, $timestamp = NULL)
     {
@@ -235,6 +271,10 @@ class Timecop
         );
     }
 
+    /**
+     * @param null|int $timestamp
+     * @return array
+     */
     public static function getdate($timestamp = NULL)
     {
         return call_user_func(
@@ -243,6 +283,11 @@ class Timecop
         );
     }
 
+    /**
+     * @param string $format
+     * @param null|int $timestamp
+     * @return string
+     */
     public static function gmdate($format, $timestamp = NULL)
     {
         return call_user_func(
@@ -251,6 +296,16 @@ class Timecop
         );
     }
 
+    /**
+     * @param null|int $hour
+     * @param null|int $minute
+     * @param null|int $second
+     * @param null|int $month
+     * @param null|int $day
+     * @param null|int $year
+     * @param int $is_dst
+     * @return int
+     */
     public static function gmmktime($hour = NULL, $minute = NULL, $second = NULL, $month = NULL,
         $day = NULL, $year = NULL, $is_dst = -1
     ) {
@@ -267,6 +322,11 @@ class Timecop
         );
     }
 
+    /**
+     * @param string $format
+     * @param null|int $timestamp
+     * @return string
+     */
     public static function gmstrftime($format, $timestamp = NULL)
     {
         return call_user_func(
@@ -275,6 +335,11 @@ class Timecop
         );
     }
 
+    /**
+     * @param string $format
+     * @param null|int $timestamp
+     * @return int
+     */
     public static function idate($format, $timestamp = NULL)
     {
         return call_user_func(
@@ -283,6 +348,11 @@ class Timecop
         );
     }
 
+    /**
+     * @param null|int $timestamp
+     * @param bool $isAssociative
+     * @return array
+     */
     public static function localtime($timestamp = NULL, $isAssociative = FALSE)
     {
         return call_user_func(
@@ -291,6 +361,16 @@ class Timecop
         );
     }
 
+    /**
+     * @param null|int $hour
+     * @param null|int $minute
+     * @param null|int $second
+     * @param null|int $month
+     * @param null|int $day
+     * @param null|int $year
+     * @param int $is_dst
+     * @return int
+     */
     public static function mktime($hour = NULL, $minute = NULL, $second = NULL, $month = NULL,
         $day = NULL, $year = NULL, $is_dst = -1
     ) {
@@ -307,6 +387,11 @@ class Timecop
         );
     }
 
+    /**
+     * @param string $format
+     * @param null|int $timestamp
+     * @return string
+     */
     public static function strftime($format, $timestamp = NULL)
     {
         return call_user_func(
@@ -315,6 +400,11 @@ class Timecop
         );
     }
 
+    /**
+     * @param string $date
+     * @param string $format
+     * @return array
+     */
     public static function strptime($date, $format)
     {
         return call_user_func(
@@ -323,6 +413,11 @@ class Timecop
         );
     }
 
+    /**
+     * @param string $format
+     * @param null|int $timestamp
+     * @return int
+     */
     public static function strtotime($format, $timestamp = NULL)
     {
         return call_user_func(
