@@ -1,5 +1,5 @@
 # Timecop-PHP
-Time testing php library inspired by [ruby timecop gem](https://github.com/jtrupiano/timecop).
+Time testing php library inspired by [ruby timecop gem](https://github.com/travisjeffery/timecop).
 
 Timecop-PHP provides wrappers around date/time functions:
 
